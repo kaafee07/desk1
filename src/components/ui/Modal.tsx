@@ -3,13 +3,13 @@ import { cn } from '@/lib/utils'
 
 interface ModalProps {
   isOpen: boolean
-  // ...existing code...
+  onClose?: () => void
   title?: string
   children: ReactNode
   size?: 'sm' | 'md' | 'lg' | 'xl'
 }
 
-export function Modal({ isOpen, title, children, size = 'md' }: Omit<ModalProps, 'onClose'>) {
+export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalProps) {
   if (!isOpen) return null
 
   const sizes = {

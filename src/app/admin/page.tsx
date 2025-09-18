@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import OfficeFormModal from '@/components/OfficeFormModal'
 import RewardFormModal from '@/components/RewardFormModal'
@@ -181,9 +181,21 @@ export default function AdminDashboard() {
   const [editingSubscription, setEditingSubscription] = useState<Subscription | null>(null)
   const router = useRouter()
 
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await fetch('/api/admin/dashboard')
+      if (!response.ok) throw new Error('Failed to fetch dashboard data')
+      const data = await response.json()
+      setStats(data.stats)
+      setRecentActivity(data.recentActivity)
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error)
+    }
+  }, [])
+
   useEffect(() => {
     fetchData()
-  }, [activeTab])
+  }, [activeTab, fetchData])
 
   const fetchData = async () => {
     setLoading(true)

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { verifyTokenEdge } from '@/lib/auth'
+import { verifyToken } from '@/lib/jwt-edge'
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -33,7 +33,7 @@ export async function middleware(request: NextRequest) {
 
   try {
     // Verify the token
-    const decoded = await verifyTokenEdge(token)
+    const decoded = await verifyToken(token)
 
     if (!decoded) {
       console.log('❌ Token verification returned null')

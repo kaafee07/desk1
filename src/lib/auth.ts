@@ -9,6 +9,8 @@ export interface JWTPayload {
   role: UserRole
   phone?: string
   username?: string
+  exp?: number
+  iat?: number
 }
 
 export function signToken(payload: JWTPayload): string {
@@ -38,7 +40,7 @@ export async function verifyTokenEdge(token: string): Promise<JWTPayload | null>
     const payloadB64 = parts[1]
 
     // Simple base64 decode
-  let payload: Record<string, unknown>
+    let payload: Partial<JWTPayload>
     try {
       // Replace URL-safe characters and add padding
       let base64 = payloadB64.replace(/-/g, '+').replace(/_/g, '/')

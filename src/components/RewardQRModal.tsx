@@ -1,6 +1,6 @@
 'use client'
 
-// ...existing code...
+import { FC } from 'react'
 import QRCode from 'react-qr-code'
 
 interface LoyaltyReward {
