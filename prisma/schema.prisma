@@ -1,0 +1,212 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for all three types: CLIENT, CASHIER, ADMIN
+model User {
+  id          String   @id @default(cuid())
+  phone       String?  @unique // For clients
+  username    String?  @unique // For admin
+  pin         String?  // For cashier (static PIN)
+  password    String?  // For admin
+  role        UserRole
+  loyaltyPoints Int    @default(0) // Only for clients
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  subscriptions Subscription[]
+  bookings      Booking[]
+  redemptions   Redemption[]
+
+  @@map("users")
+}
+
+// Office model
+model Office {
+  id          String   @id @default(cuid())
+  officeNumber String? @unique
+  name        String
+  description String?
+  capacity    Int      @default(1)
+  pricePerHour Decimal @db.Decimal(10, 2)
+  pricePerDay  Decimal @db.Decimal(10, 2)
+  pricePerWeek Decimal @db.Decimal(10, 2)
+  pricePerMonth Decimal @db.Decimal(10, 2)
+  // أسعار التجديد
+  renewalPricePerHour Decimal? @db.Decimal(10, 2)
+  renewalPricePerDay  Decimal? @db.Decimal(10, 2)
+  renewalPricePerWeek Decimal? @db.Decimal(10, 2)
+  renewalPricePerMonth Decimal? @db.Decimal(10, 2)
+  // أسعار سابقة لحساب الخصم
+  previousPricePerHour Decimal? @db.Decimal(10, 2)
+  previousPricePerDay  Decimal? @db.Decimal(10, 2)
+  previousPricePerMonth Decimal? @db.Decimal(10, 2)
+  // أسعار تجديد سابقة
+  previousRenewalPricePerHour Decimal? @db.Decimal(10, 2)
+  previousRenewalPricePerDay  Decimal? @db.Decimal(10, 2)
+  previousRenewalPricePerMonth Decimal? @db.Decimal(10, 2)
+  discountPercentage Decimal @default(0) @db.Decimal(5, 2) // خصم بالنسبة المئوية (0-100)
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  subscriptions Subscription[]
+  bookings      Booking[]
+
+  @@map("offices")
+}
+
+// Subscription model for ongoing office rentals
+model Subscription {
+  id          String           @id @default(cuid())
+  userId      String
+  officeId    String
+  duration    SubscriptionDuration
+  startDate   DateTime
+  endDate     DateTime
+  totalPrice  Decimal          @db.Decimal(10, 2)
+  status      SubscriptionStatus @default(ACTIVE)
+  purpose     String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  office Office @relation(fields: [officeId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+// Booking model for one-time bookings
+model Booking {
+  id          String        @id @default(cuid())
+  userId      String
+  officeId    String
+  bookingCode String        @unique
+  duration    BookingDuration
+  startTime   DateTime
+  endTime     DateTime
+  totalPrice  Decimal       @db.Decimal(10, 2)
+  purpose     String?
+  status      BookingStatus @default(PENDING)
+  isRenewal   Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  office Office @relation(fields: [officeId], references: [id], onDelete: Cascade)
+
+  @@map("bookings")
+}
+
+// Loyalty rewards model
+model LoyaltyReward {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  pointsCost  Int
+  type        RewardType  @default(PHYSICAL) // PHYSICAL or TIME_EXTENSION
+  timeValue   Int?        // For TIME_EXTENSION: hours to add
+  timeUnit    TimeUnit?   // For TIME_EXTENSION: HOURS, DAYS
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  redemptions Redemption[]
+
+  @@map("loyalty_rewards")
+}
+
+// Redemption model for tracking loyalty point usage
+model Redemption {
+  id            String    @id @default(cuid())
+  userId        String
+  rewardId      String
+  pointsUsed    Int
+  qrCode        String?   // QR code data
+  qrCodeExpiry  DateTime? // QR code expiration time
+  status        RedemptionStatus @default(PENDING)
+  redeemedAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  user   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reward LoyaltyReward @relation(fields: [rewardId], references: [id], onDelete: Cascade)
+
+  @@map("redemptions")
+}
+
+// Points configuration model for admin control
+model PointsConfig {
+  id          String   @id @default(cuid())
+  action      String   @unique // e.g., "HOURLY_BOOKING", "DAILY_BOOKING", "MONTHLY_BOOKING", "HOURLY_RENEWAL", etc.
+  points      Int      // Points to award
+  description String?  // Description of the action
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("points_config")
+}
+
+// Enums
+enum UserRole {
+  CLIENT
+  CASHIER
+  ADMIN
+}
+
+enum SubscriptionDuration {
+  HOURLY
+  DAILY
+  MONTHLY
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+enum BookingDuration {
+  HOURLY
+  DAILY
+  MONTHLY
+}
+
+enum BookingStatus {
+  PENDING
+  PAID
+  COMPLETED
+  CANCELLED
+}
+
+enum RedemptionStatus {
+  PENDING
+  REDEEMED
+  EXPIRED
+}
+
+enum RewardType {
+  PHYSICAL      // ملموس - يحتاج QR code وتأكيد من الكاشير
+  TIME_EXTENSION // غير ملموس - يضاف مباشرة للاشتراك
+}
+
+enum TimeUnit {
+  HOURS
+  DAYS
+}

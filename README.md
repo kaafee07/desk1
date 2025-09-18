@@ -1,36 +1,178 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Workspace Management System
+
+A full-stack web application for managing shared workspace business with a loyalty system. Built with Next.js, TailwindCSS, and MySQL.
+
+## Features
+
+### User Roles
+- **Client**: Phone-based authentication, booking management, loyalty points
+- **Cashier**: PIN-based login, QR code scanning, payment processing
+- **Admin**: Full system management with dashboard and analytics
+
+### Core Functionality
+- **Booking System**: One-time office bookings with unique codes
+- **Subscription Management**: Recurring office rentals
+- **Loyalty Program**: Points-based rewards with QR code redemption
+- **Office Management**: Admin control over workspace availability and pricing
+- **Real-time Dashboard**: Statistics and recent activity tracking
+
+## Tech Stack
+
+- **Frontend**: Next.js 15 with App Router, React 19, TailwindCSS
+- **Backend**: Next.js API Routes, Prisma ORM
+- **Database**: MySQL
+- **Authentication**: JWT tokens with role-based access control
+- **QR Codes**: react-qr-code for generation and scanning
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18+
+- MySQL database
+- npm or yarn
 
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd desk
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up environment variables:
+```bash
+cp .env.example .env
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Edit `.env` with your database credentials and secrets:
+```env
+DATABASE_URL="mysql://username:password@localhost:3306/workspace_management"
+JWT_SECRET="your-super-secret-jwt-key"
+CASHIER_PIN="1234"
+ADMIN_USERNAME="admin"
+ADMIN_PASSWORD="admin123"
+```
 
-## Learn More
+4. Set up the database:
+```bash
+# Generate Prisma client
+npm run db:generate
 
-To learn more about Next.js, take a look at the following resources:
+# Push schema to database
+npm run db:push
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Seed initial data
+npm run db:seed
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+5. Start the development server:
+```bash
+npm run dev
+```
 
-## Deploy on Vercel
+Open [http://localhost:3000](http://localhost:3000) to access the application.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Default Credentials
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Admin
+- Username: `admin`
+- Password: `admin123`
+
+### Cashier
+- PIN: `1234`
+
+### Sample Client
+- Phone: `+1234567890`
+- Loyalty Points: 150
+
+## Database Schema
+
+The system uses the following main models:
+- **User**: Handles all user types (CLIENT, CASHIER, ADMIN)
+- **Office**: Workspace definitions with pricing
+- **Booking**: One-time office reservations
+- **Subscription**: Recurring office rentals
+- **LoyaltyReward**: Available rewards for points
+- **Redemption**: Tracking of reward redemptions
+
+## API Endpoints
+
+### Authentication
+- `POST /api/auth/login` - User login
+- `POST /api/auth/logout` - User logout
+- `GET /api/auth/me` - Get current user
+
+### Client APIs
+- `GET /api/client/subscription` - Get current subscription
+- `GET /api/client/offices` - List available offices
+- `POST /api/client/booking` - Create new booking
+- `GET /api/client/rewards` - List loyalty rewards
+- `POST /api/client/redeem` - Redeem loyalty points
+
+### Cashier APIs
+- `POST /api/cashier/redeem-qr` - Scan QR code for redemption
+- `PUT /api/cashier/redeem-qr` - Confirm redemption
+- `POST /api/cashier/booking` - Check booking by code
+- `PUT /api/cashier/booking` - Mark booking as paid
+- `GET /api/cashier/current-bookings` - View active bookings
+
+### Admin APIs
+- `GET /api/admin/dashboard` - Dashboard statistics
+- `GET/POST/PUT/DELETE /api/admin/offices` - Office management
+- `GET/POST/PUT/DELETE /api/admin/rewards` - Reward management
+- `GET/PUT /api/admin/clients` - Client management
+
+## User Flows
+
+### Client Flow
+1. Login with phone number
+2. View current subscription and loyalty points
+3. Create new bookings or renew subscriptions
+4. Redeem loyalty points for rewards (generates QR code)
+
+### Cashier Flow
+1. Login with PIN
+2. Scan QR codes to process reward redemptions
+3. Enter booking codes to mark payments
+4. View currently active bookings and subscriptions
+
+### Admin Flow
+1. Login with username/password
+2. View dashboard with business statistics
+3. Manage offices (add/edit/delete)
+4. Manage loyalty rewards
+5. View and manage client accounts
+
+## Deployment
+
+### Database Setup
+Ensure your MySQL database is running and accessible. The application will create tables automatically when you run `npm run db:push`.
+
+### Environment Variables
+Make sure all environment variables are properly set in production:
+- Use strong JWT secrets
+- Change default admin credentials
+- Use secure database connections
+
+### Build and Deploy
+```bash
+npm run build
+npm start
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License.
