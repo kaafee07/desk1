@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { ErrorResponse, PointsConfigUpdateResponse, TabId, TabItem } from '@/types/admin'
 import OfficeFormModal from '@/components/OfficeFormModal'
 import RewardFormModal from '@/components/RewardFormModal'
 import ClientPointsModal from '@/components/ClientPointsModal'
@@ -371,8 +372,8 @@ export default function AdminDashboard() {
 
         alert(result.message || 'تم تحديث إعدادات النقاط بنجاح!')
       } else {
-        const error = await response.json()
-        console.error('❌ Failed to update points config:', error)
+        const error = await response.json() as ErrorResponse
+        console.error('❌ Failed to update points config:', error.message)
         alert(error.error || 'فشل في تحديث إعدادات النقاط')
       }
     } catch (error) {

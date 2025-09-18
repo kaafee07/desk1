@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyTokenEdge } from '@/lib/auth'
+import { verifyTokenEdge } from '@/lib/auth-edge'
 
 export async function POST(request: NextRequest) {
   try {

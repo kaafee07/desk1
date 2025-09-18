@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { generateQRCodeData, verifyTokenEdge } from '@/lib/auth'
+import { verifyTokenEdge } from '@/lib/auth-edge'
+import { generateQRCodeData } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
