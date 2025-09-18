@@ -38,7 +38,7 @@ export async function verifyTokenEdge(token: string): Promise<JWTPayload | null>
     const payloadB64 = parts[1]
 
     // Simple base64 decode
-    let payload: any
+  let payload: Record<string, unknown>
     try {
       // Replace URL-safe characters and add padding
       let base64 = payloadB64.replace(/-/g, '+').replace(/_/g, '/')

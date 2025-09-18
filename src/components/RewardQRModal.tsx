@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+// ...existing code...
 import QRCode from 'react-qr-code'
 
 interface LoyaltyReward {
