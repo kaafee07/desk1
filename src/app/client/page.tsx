@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import QRCode from 'react-qr-code'
+// import QRCode from 'react-qr-code' // Temporarily disabled for build
 import NameRegistrationModal from '@/components/NameRegistrationModal'
 import BookingPackagesModal from '@/components/BookingPackagesModal'
 import RenewalModal from '@/components/RenewalModal'
@@ -546,7 +546,9 @@ export default function ClientDashboard() {
 
               <div className="flex justify-center mb-6 sm:mb-8">
                 <div className="p-4 sm:p-6 bg-white rounded-2xl shadow-lg border border-gray-200">
-                  <QRCode value={qrCode} size={180} className="w-full max-w-[180px] h-auto" />
+                  <div className="w-[180px] h-[180px] bg-gray-200 flex items-center justify-center text-gray-500">
+                    QR Code Placeholder
+                  </div>
                 </div>
               </div>
 

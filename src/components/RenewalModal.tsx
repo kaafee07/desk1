@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import QRCode from 'react-qr-code'
+// import QRCode from 'react-qr-code' // Temporarily disabled for build
 
 interface Office {
   id: string

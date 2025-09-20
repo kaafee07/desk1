@@ -3,7 +3,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Server external packages for Vercel deployment
-  serverExternalPackages: ['prisma', '@prisma/client'],
+  serverExternalPackages: ['prisma', '@prisma/client', 'qrcode', 'react-qr-code'],
 
   // Image optimization configuration
   images: {
@@ -29,7 +29,13 @@ const nextConfig = {
 
   // Webpack configuration for better compatibility
   webpack: (config, { isServer }) => {
-    if (!isServer) {
+    // Add polyfill for 'self' global
+    if (isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        'self': false,
+      };
+    } else {
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
@@ -38,6 +44,15 @@ const nextConfig = {
         crypto: false,
       };
     }
+
+    // Add global polyfill
+    const webpack = require('webpack');
+    config.plugins = config.plugins || [];
+    config.plugins.push(
+      new webpack.DefinePlugin({
+        'global.self': 'global',
+      })
+    );
 
 
 
