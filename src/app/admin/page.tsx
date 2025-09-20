@@ -803,7 +803,7 @@ export default function AdminDashboard() {
                       <td className="px-6 py-4 whitespace-nowrap text-right">
                         {(() => {
                           // حساب الخصومات من الأسعار السابقة (نفس المنطق المستخدم في العميل)
-                          const calculateDiscount = (previousPrice: number | null, currentPrice: number): number => {
+                          const calculateDiscount = (previousPrice: number | null | undefined, currentPrice: number): number => {
                             if (previousPrice && previousPrice > 0 && currentPrice > 0 && previousPrice > currentPrice) {
                               return Math.round(((previousPrice - currentPrice) / previousPrice) * 100)
                             }
