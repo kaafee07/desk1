@@ -112,6 +112,15 @@ export async function POST(request: NextRequest) {
     return response
   } catch (error) {
     console.error('Login error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      DATABASE_URL: process.env.DATABASE_URL ? 'Set' : 'Not set',
+      JWT_SECRET: process.env.JWT_SECRET ? 'Set' : 'Not set'
+    })
+    return NextResponse.json({
+      error: 'Internal server error',
+      details: process.env.NODE_ENV === 'development' ? error instanceof Error ? error.message : 'Unknown error' : undefined
+    }, { status: 500 })
   }
 }
