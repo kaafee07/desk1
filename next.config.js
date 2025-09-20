@@ -1,3 +1,5 @@
+
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Server external packages for Vercel deployment
@@ -9,8 +11,7 @@ const nextConfig = {
     unoptimized: false, // Enable optimization for better performance
   },
 
-  // Output configuration for Vercel
-  output: 'standalone',
+
 
   // ESLint configuration
   eslint: {
@@ -36,21 +37,9 @@ const nextConfig = {
         tls: false,
         crypto: false,
       };
-
-      // Fix for 'self is not defined' error
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        'self': false,
-      };
     }
 
-    // Add global polyfills
-    config.plugins = config.plugins || [];
-    config.plugins.push(
-      new config.webpack.DefinePlugin({
-        'global.self': 'globalThis',
-      })
-    );
+
 
     // Optimize bundle size
     config.optimization = {

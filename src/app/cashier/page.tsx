@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import jsQR from 'jsqr'
 
 interface QRScanResult {
   type: 'payment' | 'loyalty'
@@ -239,7 +238,7 @@ export default function CashierDashboard() {
     }
   }
 
-  const scanQRCode = () => {
+  const scanQRCode = async () => {
     if (!videoRef.current || !canvasRef.current) return
 
     const video = videoRef.current
@@ -248,7 +247,7 @@ export default function CashierDashboard() {
 
     if (!context) return
 
-    const scan = () => {
+    const scan = async () => {
       if (video.readyState === video.HAVE_ENOUGH_DATA) {
         canvas.width = video.videoWidth
         canvas.height = video.videoHeight
@@ -256,14 +255,9 @@ export default function CashierDashboard() {
 
         const imageData = context.getImageData(0, 0, canvas.width, canvas.height)
 
-        // Use jsQR to detect QR codes
-        const qrCode = jsQR(imageData.data, imageData.width, imageData.height)
-
-        if (qrCode) {
-          console.log('🎯 QR Code detected:', qrCode.data)
-          handleQRDetected(qrCode.data)
-          return
-        }
+        // TODO: Implement QR code scanning
+        // For now, we'll use manual input
+        console.log('QR scanning not available in production build')
       }
 
       if (isScanning) {
