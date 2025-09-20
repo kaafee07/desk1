@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyTokenEdge } from '@/lib/auth-edge'
-import { generateBookingCode } from '@/lib/auth'
+import { verifyTokenEdge, generateBookingCode } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
@@ -57,19 +56,19 @@ export async function POST(request: NextRequest) {
         duration = 'HOURLY'
         durationHours = 1
         // استخدم سعر التجديد إذا كان متوفراً، وإلا استخدم السعر العادي
-        price = (activeSubscription.office.renewalPricePerHour?.toNumber() || activeSubscription.office.pricePerHour?.toNumber() || 25)
+        price = parseInt(activeSubscription.office.renewalPricePerHour) || parseInt(activeSubscription.office.pricePerHour) || 25
         break
       case 'daily':
         duration = 'DAILY'
         durationHours = 24
         // استخدم سعر التجديد إذا كان متوفراً، وإلا استخدم السعر العادي
-        price = (activeSubscription.office.renewalPricePerDay?.toNumber() || activeSubscription.office.pricePerDay?.toNumber() || 100)
+        price = parseInt(activeSubscription.office.renewalPricePerDay) || parseInt(activeSubscription.office.pricePerDay) || 100
         break
       case 'monthly':
         duration = 'MONTHLY'
         durationHours = 24 * 30
         // استخدم سعر التجديد إذا كان متوفراً، وإلا استخدم السعر العادي
-        price = (activeSubscription.office.renewalPricePerMonth?.toNumber() || activeSubscription.office.pricePerMonth?.toNumber() || 3000)
+        price = parseInt(activeSubscription.office.renewalPricePerMonth) || parseInt(activeSubscription.office.pricePerMonth) || 3000
         break
       default:
         return NextResponse.json({ error: 'نوع الباقة غير صحيح' }, { status: 400 })

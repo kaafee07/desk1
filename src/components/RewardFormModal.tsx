@@ -18,14 +18,15 @@ interface RewardFormModalProps {
   onClose: () => void
   onSave: (rewardData: Partial<LoyaltyReward>) => Promise<void>
   editingReward: LoyaltyReward | null
-
+  loading?: boolean
 }
 
 export default function RewardFormModal({
   isOpen,
   onClose,
   onSave,
-  editingReward
+  editingReward,
+  loading = false
 }: RewardFormModalProps) {
   const [formData, setFormData] = useState({
     name: '',
@@ -99,7 +100,7 @@ export default function RewardFormModal({
       // Prepare clean data
       const pointsRequired = parseInt(formData.pointsRequired)
 
-      const rewardData: Partial<LoyaltyReward> = {
+      const rewardData: any = {
         name: formData.name.trim(),
         description: formData.description.trim(),
         pointsRequired,

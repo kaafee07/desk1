@@ -150,20 +150,78 @@ The system uses the following main models:
 
 ## Deployment
 
-### Database Setup
-Ensure your MySQL database is running and accessible. The application will create tables automatically when you run `npm run db:push`.
+### Deploy to Vercel (Recommended)
 
-### Environment Variables
+This application is optimized for deployment on Vercel. Follow these steps:
+
+#### 1. Prepare Your Database
+- Use a cloud MySQL service like PlanetScale, Railway, or Supabase
+- Get your database connection string
+
+#### 2. Deploy to Vercel
+1. Push your code to GitHub/GitLab/Bitbucket
+2. Connect your repository to Vercel
+3. Configure environment variables in Vercel dashboard:
+
+```env
+DATABASE_URL="your-production-database-url"
+JWT_SECRET="your-super-secret-jwt-key-for-production"
+NEXTAUTH_SECRET="your-nextauth-secret-key"
+NEXTAUTH_URL="https://your-app-name.vercel.app"
+CASHIER_PIN="your-secure-pin"
+ADMIN_USERNAME="your-admin-username"
+ADMIN_PASSWORD="your-secure-admin-password"
+NODE_ENV="production"
+```
+
+#### 3. Build Configuration
+The project includes:
+- `vercel.json` for deployment configuration
+- Optimized `next.config.js` for production
+- Build scripts that handle Prisma generation and migrations
+
+#### 4. Database Migration
+After deployment, your database will be automatically migrated using the `vercel-build` script.
+
+### Manual Deployment
+
+#### Database Setup
+Ensure your MySQL database is running and accessible. The application will create tables automatically when you run database migrations.
+
+#### Environment Variables
 Make sure all environment variables are properly set in production:
-- Use strong JWT secrets
+- Use strong, unique JWT secrets
 - Change default admin credentials
-- Use secure database connections
+- Use secure database connections with SSL
+- Set NEXTAUTH_URL to your production domain
 
-### Build and Deploy
+#### Build and Deploy
 ```bash
+# Install dependencies
+npm install
+
+# Generate Prisma client and build
 npm run build
+
+# Run database migrations (production)
+npm run db:migrate
+
+# Start the application
 npm start
 ```
+
+### Environment Variables Reference
+
+| Variable | Description | Required | Example |
+|----------|-------------|----------|---------|
+| `DATABASE_URL` | MySQL connection string | Yes | `mysql://user:pass@host:3306/db` |
+| `JWT_SECRET` | Secret for JWT token signing | Yes | `your-super-secret-key` |
+| `NEXTAUTH_SECRET` | NextAuth.js secret | Yes | `your-nextauth-secret` |
+| `NEXTAUTH_URL` | Your app's URL | Yes | `https://yourapp.vercel.app` |
+| `CASHIER_PIN` | Static PIN for cashier login | Yes | `1234` |
+| `ADMIN_USERNAME` | Admin username | Yes | `admin` |
+| `ADMIN_PASSWORD` | Admin password | Yes | `secure-password` |
+| `NODE_ENV` | Environment mode | No | `production` |
 
 ## Contributing
 

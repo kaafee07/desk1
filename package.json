@@ -4,13 +4,18 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
-    "build": "next build",
-    "start": "next start -p 3000",
+    "build": "prisma generate && next build",
+    "start": "next start",
     "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "type-check": "tsc --noEmit",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
+    "db:migrate": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "postinstall": "prisma generate",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

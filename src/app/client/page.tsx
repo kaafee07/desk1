@@ -119,9 +119,9 @@ export default function ClientDashboard() {
             return 0
           }
 
-          const hourlyDiscount = calculateDiscount(office.previousPricePerHour ?? null, office.pricePerHour ?? null)
-          const dailyDiscount = calculateDiscount(office.previousPricePerDay ?? null, office.pricePerDay ?? null)
-          const monthlyDiscount = calculateDiscount(office.previousPricePerMonth ?? null, office.pricePerMonth ?? null)
+          let hourlyDiscount = calculateDiscount(office.previousPricePerHour, office.pricePerHour)
+          let dailyDiscount = calculateDiscount(office.previousPricePerDay, office.pricePerDay)
+          let monthlyDiscount = calculateDiscount(office.previousPricePerMonth, office.pricePerMonth)
 
           // لا نضيف خصومات تجريبية - نعتمد فقط على الأسعار السابقة الفعلية
           // هذا يضمن التطابق مع شاشة الإدارة

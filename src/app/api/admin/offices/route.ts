@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     // For now, allow all requests (middleware is disabled)
     // const userRole = request.headers.get('x-user-role')

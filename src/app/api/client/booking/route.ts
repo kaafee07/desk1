@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyTokenEdge } from '@/lib/auth-edge'
-import { generateBookingCode } from '@/lib/auth'
+import { verifyTokenEdge, generateBookingCode } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {

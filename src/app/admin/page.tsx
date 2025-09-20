@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { ErrorResponse, PointsConfigUpdateResponse, TabId, TabItem } from '@/types/admin'
 import OfficeFormModal from '@/components/OfficeFormModal'
 import RewardFormModal from '@/components/RewardFormModal'
 import ClientPointsModal from '@/components/ClientPointsModal'
@@ -182,21 +181,9 @@ export default function AdminDashboard() {
   const [editingSubscription, setEditingSubscription] = useState<Subscription | null>(null)
   const router = useRouter()
 
-  const fetchData = useCallback(async () => {
-    try {
-      const response = await fetch('/api/admin/dashboard')
-      if (!response.ok) throw new Error('Failed to fetch dashboard data')
-      const data = await response.json()
-      setStats(data.stats)
-      setRecentActivity(data.recentActivity)
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error)
-    }
-  }, [])
-
   useEffect(() => {
     fetchData()
-  }, [activeTab, fetchData])
+  }, [activeTab])
 
   const fetchData = async () => {
     setLoading(true)
@@ -372,8 +359,8 @@ export default function AdminDashboard() {
 
         alert(result.message || 'تم تحديث إعدادات النقاط بنجاح!')
       } else {
-        const error = await response.json() as ErrorResponse
-        console.error('❌ Failed to update points config:', error.message)
+        const error = await response.json()
+        console.error('❌ Failed to update points config:', error)
         alert(error.error || 'فشل في تحديث إعدادات النقاط')
       }
     } catch (error) {

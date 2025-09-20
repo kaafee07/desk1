@@ -29,16 +29,14 @@ interface Subscription {
   office: Office
 }
 
-import { CreateSubscriptionData } from '@/types/subscription'
-
 interface SubscriptionFormModalProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (subscriptionData: CreateSubscriptionData) => Promise<void>
+  onSave: (subscriptionData: any) => Promise<void>
   editingSubscription: Subscription | null
   clients: Client[]
   offices: Office[]
-
+  loading?: boolean
 }
 
 export default function SubscriptionFormModal({
@@ -47,7 +45,8 @@ export default function SubscriptionFormModal({
   onSave,
   editingSubscription,
   clients,
-  offices
+  offices,
+  loading = false
 }: SubscriptionFormModalProps) {
   const [formData, setFormData] = useState({
     userId: '',

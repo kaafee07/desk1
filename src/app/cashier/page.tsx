@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import jsQR from 'jsqr'
 
@@ -39,21 +39,7 @@ interface PendingItem {
   totalPrice?: number
   isRenewal?: boolean
   // Reward fields
- interface PaymentConfirmationProps {
-  booking: BookingDetails
-  onConfirm: () => void
-  onCancel: () => void
-  isProcessing: boolean
-}
-
-import { PaymentConfirmation, LoyaltyConfirmation } from '@/components/cashier/Confirmations'
-
-export default
-  booking,
-  onConfirm,
-  onCancel,
-  isProcessing
-}) => {Code?: string
+  redemptionCode?: string
   rewardName?: string
   rewardDescription?: string
   pointsUsed?: number
@@ -125,27 +111,14 @@ export default function CashierDashboard() {
     fetchPendingBookings()
 
     // Set up intervals for refreshing and cleanup
-    const cleanupExpiredBookings = useCallback(async () => {
-    try {
-      const response = await fetch('/api/cashier/cleanup-expired')
-      if (response.ok) {
-        const data = await response.json()
-        console.log('✅ Cleaned up expired bookings:', data)
-      }
-    } catch (error) {
-      console.error('❌ Failed to cleanup expired bookings:', error)
-    }
-  }, [])
-
-  useEffect(() => {
-    const refreshInterval = setInterval(fetchPendingBookings, 30000) // Refresh every 30 seconds
+    const refreshInterval = setInterval(fetchPendingBookings, 5000) // Refresh every 5 seconds
     const cleanupInterval = setInterval(cleanupExpiredBookings, 60000) // Cleanup every minute
 
     return () => {
       clearInterval(refreshInterval)
       clearInterval(cleanupInterval)
     }
-  }, [cleanupExpiredBookings])
+  }, [])
 
   const startCamera = async () => {
     try {
@@ -186,7 +159,8 @@ export default function CashierDashboard() {
     setMessage('')
   }
 
-  const fetchPendingBookings = useCallback(async () => {
+  // Fetch pending bookings and rewards
+  const fetchPendingBookings = async () => {
     try {
       const response = await fetch('/api/cashier/pending-bookings')
       if (response.ok) {
@@ -197,16 +171,17 @@ export default function CashierDashboard() {
     } catch (error) {
       console.error('Error fetching pending bookings:', error)
     }
-  }, [])
+  }
 
-  const cleanupExpiredBookings = useCallback(async () => {
+  // Clean up expired bookings
+  const cleanupExpiredBookings = async () => {
     try {
       await fetch('/api/cashier/pending-bookings', { method: 'DELETE' })
       fetchPendingBookings() // Refresh the list
-    } catch (err) {
-      console.error('Error cleaning up expired bookings:', err)
+    } catch (error) {
+      console.error('Error cleaning up expired bookings:', error)
     }
-  }, [fetchPendingBookings])
+  }
 
   // Confirm booking from pending list
   const confirmPendingBooking = async (bookingId: string) => {
@@ -805,7 +780,7 @@ export default function CashierDashboard() {
 }
 
 // Payment Confirmation Component
-const PaymentConfirmation: React.FC<{
+function PaymentConfirmation({
   booking,
   onConfirm,
   onCancel,
