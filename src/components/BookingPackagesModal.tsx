@@ -113,49 +113,55 @@ export default function BookingPackagesModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
         
         {!showPayment ? (
           // Package Selection View
-          <div className="p-6">
-            <div className="flex justify-between items-center mb-6">
-              <div>
-                <h3 className="text-xl font-bold text-gray-900">اختر باقة الحجز</h3>
-                <p className="text-sm text-gray-600 mt-1">
-                  المكتب: <span className="font-medium">{office.name}</span>
-                  {office.discountPercentage > 0 && (
-                    <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium mr-2">
-                      🏷️ خصم {office.discountPercentage}%
-                    </span>
-                  )}
-                </p>
+          <>
+            {/* Header - Fixed */}
+            <div className="p-6 border-b border-gray-200 flex-shrink-0">
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900">اختر باقة الحجز</h3>
+                  <p className="text-sm text-gray-600 mt-1">
+                    المكتب: <span className="font-medium">{office.name}</span>
+                    {office.discountPercentage > 0 && (
+                      <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium mr-2">
+                        🏷️ خصم {office.discountPercentage}%
+                      </span>
+                    )}
+                  </p>
+                </div>
+                <button
+                  onClick={onClose}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
-              <button
-                onClick={onClose}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-              {packages.map((pkg) => (
-                <div
-                  key={pkg.type}
-                  onClick={() => handlePackageSelect(pkg)}
-                  className={`border-2 rounded-lg p-6 cursor-pointer transition-all hover:shadow-lg ${
-                    selectedPackage?.type === pkg.type
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <div className="text-center">
-                    <div className="text-3xl mb-3">{pkg.icon}</div>
-                    <h4 className="text-lg font-semibold text-gray-900 mb-2">
-                      {pkg.name}
-                    </h4>
+            {/* Content - Scrollable */}
+            <div className="flex-1 overflow-y-auto p-6">
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                {packages.map((pkg) => (
+                  <div
+                    key={pkg.type}
+                    onClick={() => handlePackageSelect(pkg)}
+                    className={`border-2 rounded-lg p-4 cursor-pointer transition-all hover:shadow-lg ${
+                      selectedPackage?.type === pkg.type
+                        ? 'border-blue-500 bg-blue-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="text-center">
+                      <div className="text-2xl mb-2">{pkg.icon}</div>
+                      <h4 className="text-base font-semibold text-gray-900 mb-2">
+                        {pkg.name}
+                      </h4>
                     <div className="mb-2">
                       {(() => {
                         // تحديد السعر السابق حسب نوع الباقة وحساب الخصم
@@ -188,27 +194,27 @@ export default function BookingPackagesModal({
                           )
                         } else {
                           return (
-                            <div className="text-2xl font-bold text-blue-600">
+                            <div className="text-xl font-bold text-blue-600">
                               {Number(pkg.price)} ريال
                             </div>
                           )
                         }
                       })()}
-                    </div>
-                    <div className="text-sm text-gray-600 mb-3">
-                      {pkg.duration}
-                    </div>
-                    <p className="text-xs text-gray-500">
-                      {pkg.description}
-                    </p>
-                    
-                    {pkg.type === 'month' && (
-                      <div className="mt-2">
-                        <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                          أفضل قيمة
-                        </span>
                       </div>
-                    )}
+                      <div className="text-sm text-gray-600 mb-2">
+                        {pkg.duration}
+                      </div>
+                      <p className="text-xs text-gray-500 mb-3">
+                        {pkg.description}
+                      </p>
+
+                      {pkg.type === 'month' && (
+                        <div className="mb-2">
+                          <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                            أفضل قيمة
+                          </span>
+                        </div>
+                      )}
 
                     {(() => {
                       // حساب الخصم من الأسعار السابقة حسب نوع الباقة
@@ -227,26 +233,26 @@ export default function BookingPackagesModal({
                       const discountPercentage = hasDiscount ? Math.round(((Number(previousPrice) - Number(pkg.price)) / Number(previousPrice)) * 100) : 0
 
                       return hasDiscount && (
-                        <div className="mt-2">
-                          <span className="inline-block bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs px-3 py-1 rounded-full font-bold animate-pulse">
+                        <div>
+                          <span className="inline-block bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs px-2 py-1 rounded-full font-bold">
                             🔥 خصم {discountPercentage}%
                           </span>
                         </div>
                       )
                     })()}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
 
-            {selectedPackage && (
-              <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                <h4 className="font-medium text-gray-900 mb-2">ملخص الحجز:</h4>
-                <div className="text-sm text-gray-600 space-y-1">
-                  <p>المكتب: <span className="font-medium">{office.name}</span></p>
-                  <p>الباقة: <span className="font-medium">{selectedPackage.name}</span></p>
-                  <p>المدة: <span className="font-medium">{selectedPackage.duration}</span></p>
-                  <p>السعر:
+              {selectedPackage && (
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h4 className="font-medium text-gray-900 mb-2">ملخص الحجز:</h4>
+                  <div className="text-sm text-gray-600 space-y-1">
+                    <p>المكتب: <span className="font-medium">{office.name}</span></p>
+                    <p>الباقة: <span className="font-medium">{selectedPackage.name}</span></p>
+                    <p>المدة: <span className="font-medium">{selectedPackage.duration}</span></p>
+                    <p>السعر:
                     {(() => {
                       // تحديد السعر السابق حسب نوع الباقة المختارة
                       let previousPrice = null
@@ -274,27 +280,31 @@ export default function BookingPackagesModal({
                         return <span className="font-medium text-blue-600">{Number(selectedPackage.price)} ريال</span>
                       }
                     })()}
-                  </p>
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )}
-
-            <div className="flex justify-end space-x-3 space-x-reverse">
-              <button
-                onClick={onClose}
-                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-              >
-                إلغاء
-              </button>
-              <button
-                onClick={handleConfirmBooking}
-                disabled={!selectedPackage || loading}
-                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? 'جاري المعالجة...' : 'تأكيد الحجز'}
-              </button>
+              )}
             </div>
-          </div>
+
+            {/* Footer - Fixed */}
+            <div className="p-6 border-t border-gray-200 flex-shrink-0">
+              <div className="flex justify-end space-x-3 space-x-reverse">
+                <button
+                  onClick={onClose}
+                  className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                >
+                  إلغاء
+                </button>
+                <button
+                  onClick={handleConfirmBooking}
+                  disabled={!selectedPackage || loading}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? 'جاري المعالجة...' : 'اختر هذا المكتب'}
+                </button>
+              </div>
+            </div>
+          </>
         ) : (
           // Payment QR Code View - Updated to match RenewalModal design
           <div className="p-6 text-center">
