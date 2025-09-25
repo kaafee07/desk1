@@ -31,11 +31,23 @@ export default function InstallAppButton() {
     <>
       {/* Install Button */}
       {(isInstallable || !isInstalled) && (
-        <button
-          onClick={handleInstall}
-          disabled={isInstalling}
-          className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-4 rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-300 font-semibold shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30 flex items-center justify-center space-x-2 space-x-reverse disabled:opacity-50 disabled:cursor-not-allowed"
-        >
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 mb-4">
+          <div className="flex items-center mb-3">
+            <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mr-3">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900">إضافة التطبيق للشاشة الرئيسية</h3>
+              <p className="text-xs text-gray-600">للوصول السريع بدون فتح المتصفح</p>
+            </div>
+          </div>
+          <button
+            onClick={handleInstall}
+            disabled={isInstalling}
+            className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-4 rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-300 font-semibold shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30 flex items-center justify-center space-x-2 space-x-reverse disabled:opacity-50 disabled:cursor-not-allowed animate-pulse-install"
+          >
           {isInstalling ? (
             <>
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -49,7 +61,8 @@ export default function InstallAppButton() {
               <span>📱 إضافة إلى الشاشة الرئيسية</span>
             </>
           )}
-        </button>
+          </button>
+        </div>
       )}
 
       {/* Instructions Modal */}

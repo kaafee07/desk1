@@ -1,10 +1,12 @@
 // Service Worker for PWA functionality
-const CACHE_NAME = 'workspace-v1';
+const CACHE_NAME = 'workspace-v2';
 const urlsToCache = [
   '/',
   '/client',
   '/client-login',
   '/manifest.json',
+  '/offline.html',
+  '/icons/icon.svg',
   // Add other important routes and assets
 ];
 
@@ -21,13 +23,43 @@ self.addEventListener('install', (event) => {
 
 // Fetch event
 self.addEventListener('fetch', (event) => {
+  // Skip non-GET requests
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
-        // Return cached version or fetch from network
-        return response || fetch(event.request);
-      }
-    )
+        // Return cached version if available
+        if (response) {
+          return response;
+        }
+
+        // Try to fetch from network
+        return fetch(event.request)
+          .then((response) => {
+            // Don't cache non-successful responses
+            if (!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
+            }
+
+            // Clone the response
+            const responseToCache = response.clone();
+
+            // Add to cache for future use
+            caches.open(CACHE_NAME)
+              .then((cache) => {
+                cache.put(event.request, responseToCache);
+              });
+
+            return response;
+          })
+          .catch(() => {
+            // If network fails, show offline page for navigation requests
+            if (event.request.destination === 'document') {
+              return caches.match('/offline.html');
+            }
+          });
+      })
   );
 });
 

@@ -8,6 +8,7 @@ import BookingPackagesModal from '@/components/BookingPackagesModal'
 import RenewalModal from '@/components/RenewalModal'
 import RewardQRModal from '@/components/RewardQRModal'
 import InstallAppButton from '@/components/InstallAppButton'
+import PWAPrompt from '@/components/PWAPrompt'
 
 interface User {
   id: string
@@ -976,6 +977,9 @@ export default function ClientDashboard() {
           redemptionCode={redemptionCode}
         />
       </div>
+
+      {/* PWA Prompt */}
+      <PWAPrompt />
     </div>
   )
 }
