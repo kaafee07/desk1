@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { safeRedirect } from '@/hooks/useClientSide'
 
 type LoginType = 'client' | 'cashier' | 'admin'
 
@@ -54,15 +55,15 @@ export default function LoginPage() {
           switch (data.user.role) {
             case 'CLIENT':
               console.log('🔄 Redirecting to /client')
-              window.location.href = '/client'
+              safeRedirect('/client')
               break
             case 'CASHIER':
               console.log('🔄 Redirecting to /cashier')
-              window.location.href = '/cashier'
+              safeRedirect('/cashier')
               break
             case 'ADMIN':
               console.log('🔄 Redirecting to /admin')
-              window.location.href = '/admin'
+              safeRedirect('/admin')
               break
             default:
               console.log('❌ Unknown role:', data.user.role)

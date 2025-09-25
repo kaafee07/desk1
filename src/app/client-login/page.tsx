@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import { safeRedirect } from '@/hooks/useClientSide'
 
 export default function ClientLoginPage() {
   const [phone, setPhone] = useState('')
@@ -45,7 +46,7 @@ export default function ClientLoginPage() {
         setTimeout(() => {
           if (data.user.role === 'CLIENT') {
             console.log('🔄 Redirecting to /client')
-            window.location.href = '/client'
+            safeRedirect('/client')
           } else {
             console.log('❌ Invalid role for client login:', data.user.role)
             setError('Invalid user role for client login')

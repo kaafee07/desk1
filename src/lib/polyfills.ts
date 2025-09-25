@@ -7,7 +7,19 @@ if (typeof self === 'undefined') {
 
 // Fix for 'window is not defined' error
 if (typeof window === 'undefined') {
-  (global as any).window = {};
+  (global as any).window = {
+    location: {
+      protocol: 'https:',
+      host: 'localhost',
+      hostname: 'localhost',
+      port: '',
+      pathname: '/',
+      search: '',
+      hash: '',
+      href: 'https://localhost/',
+      origin: 'https://localhost'
+    }
+  };
 }
 
 // Fix for 'document is not defined' error

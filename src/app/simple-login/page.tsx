@@ -25,7 +25,9 @@ export default function SimpleLogin() {
         setMessage(`✅ نجح تسجيل الدخول! المستخدم: ${data.user.username} - الدور: ${data.user.role}`)
         // إعادة توجيه بعد 2 ثانية
         setTimeout(() => {
-          window.location.href = '/admin'
+          if (typeof window !== 'undefined') {
+            window.location.href = '/admin'
+          }
         }, 2000)
       } else {
         setMessage(`❌ فشل تسجيل الدخول: ${data.error}`)
@@ -53,7 +55,9 @@ export default function SimpleLogin() {
       if (response.ok) {
         setMessage(`✅ نجح تسجيل الدخول! الدور: ${data.user.role}`)
         setTimeout(() => {
-          window.location.href = '/cashier'
+          if (typeof window !== 'undefined') {
+            window.location.href = '/cashier'
+          }
         }, 2000)
       } else {
         setMessage(`❌ فشل تسجيل الدخول: ${data.error}`)
@@ -81,7 +85,9 @@ export default function SimpleLogin() {
       if (response.ok) {
         setMessage(`✅ نجح تسجيل الدخول! الهاتف: ${data.user.phone} - النقاط: ${data.user.loyaltyPoints}`)
         setTimeout(() => {
-          window.location.href = '/client'
+          if (typeof window !== 'undefined') {
+            window.location.href = '/client'
+          }
         }, 2000)
       } else {
         setMessage(`❌ فشل تسجيل الدخول: ${data.error}`)
