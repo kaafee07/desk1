@@ -753,21 +753,21 @@ export default function ClientDashboard() {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                   {offices.map((office) => (
-                    <div key={office.id} className="group bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl p-6 hover:shadow-xl hover:shadow-indigo-500/10 hover:border-indigo-200 transition-all duration-300">
-                      <div className="text-center mb-6">
-                        <div className="w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-105 transition-transform duration-300">
-                          <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div key={office.id} className="group bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl p-4 sm:p-6 hover:shadow-xl hover:shadow-indigo-500/10 hover:border-indigo-200 transition-all duration-300">
+                      <div className="text-center mb-4 sm:mb-6">
+                        <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:scale-105 transition-transform duration-300">
+                          <svg className="w-6 h-6 sm:w-8 sm:h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                           </svg>
                         </div>
-                        <h4 className="text-xl font-bold text-gray-900 mb-2">{office.name}</h4>
-                        <p className="text-gray-600 leading-relaxed">{office.description}</p>
+                        <h4 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{office.name}</h4>
+                        <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{office.description}</p>
                       </div>
 
-                      <div className="space-y-3 mb-6">
-                        <div className="flex justify-between items-center bg-white/60 backdrop-blur-sm border border-gray-200/50 rounded-xl p-4">
+                      <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
+                        <div className="flex justify-between items-center bg-white/60 backdrop-blur-sm border border-gray-200/50 rounded-xl p-3 sm:p-4">
                           <div className="flex items-center">
                             <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
                               <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -796,7 +796,7 @@ export default function ClientDashboard() {
                           </div>
                         </div>
 
-                        <div className="flex justify-between items-center bg-white/60 backdrop-blur-sm border border-gray-200/50 rounded-xl p-4">
+                        <div className="flex justify-between items-center bg-white/60 backdrop-blur-sm border border-gray-200/50 rounded-xl p-3 sm:p-4">
                           <div className="flex items-center">
                             <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center mr-3">
                               <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -825,7 +825,7 @@ export default function ClientDashboard() {
                           </div>
                         </div>
 
-                        <div className="flex justify-between items-center bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-4">
+                        <div className="flex justify-between items-center bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-3 sm:p-4">
                           <div className="flex items-center">
                             <div className="w-8 h-8 bg-emerald-200 rounded-lg flex items-center justify-center mr-3">
                               <svg className="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -915,7 +915,7 @@ export default function ClientDashboard() {
                           handleBookOffice(office)
                           setShowBookingForm(false)
                         }}
-                        className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-4 px-6 rounded-xl hover:from-indigo-600 hover:to-purple-700 transition-all duration-300 font-semibold text-lg shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 flex items-center justify-center space-x-3 space-x-reverse group-hover:scale-105"
+                        className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-3 sm:py-4 px-4 sm:px-6 rounded-xl hover:from-indigo-600 hover:to-purple-700 transition-all duration-300 font-semibold text-base sm:text-lg shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 flex items-center justify-center space-x-2 sm:space-x-3 space-x-reverse group-hover:scale-105"
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />

@@ -112,18 +112,18 @@ export default function BookingPackagesModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-white rounded-lg sm:rounded-xl shadow-xl w-full max-w-4xl max-h-[95vh] sm:max-h-[90vh] flex flex-col">
         
         {!showPayment ? (
           // Package Selection View
           <>
             {/* Header - Fixed */}
-            <div className="p-6 border-b border-gray-200 flex-shrink-0">
+            <div className="p-4 sm:p-6 border-b border-gray-200 flex-shrink-0">
               <div className="flex justify-between items-center">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900">اختر باقة الحجز</h3>
-                  <p className="text-sm text-gray-600 mt-1">
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900">اختر باقة الحجز</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 mt-1">
                     المكتب: <span className="font-medium">{office.name}</span>
                     {office.discountPercentage > 0 && (
                       <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium mr-2">
@@ -144,22 +144,22 @@ export default function BookingPackagesModal({
             </div>
 
             {/* Content - Scrollable */}
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6">
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
                 {packages.map((pkg) => (
                   <div
                     key={pkg.type}
                     onClick={() => handlePackageSelect(pkg)}
-                    className={`border-2 rounded-lg p-4 cursor-pointer transition-all hover:shadow-lg ${
+                    className={`border-2 rounded-lg p-3 sm:p-4 cursor-pointer transition-all hover:shadow-lg ${
                       selectedPackage?.type === pkg.type
                         ? 'border-blue-500 bg-blue-50'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
                     <div className="text-center">
-                      <div className="text-2xl mb-2">{pkg.icon}</div>
-                      <h4 className="text-base font-semibold text-gray-900 mb-2">
+                      <div className="text-xl sm:text-2xl mb-2">{pkg.icon}</div>
+                      <h4 className="text-sm sm:text-base font-semibold text-gray-900 mb-2">
                         {pkg.name}
                       </h4>
                     <div className="mb-2">
@@ -194,17 +194,17 @@ export default function BookingPackagesModal({
                           )
                         } else {
                           return (
-                            <div className="text-xl font-bold text-blue-600">
+                            <div className="text-lg sm:text-xl font-bold text-blue-600">
                               {Number(pkg.price)} ريال
                             </div>
                           )
                         }
                       })()}
                       </div>
-                      <div className="text-sm text-gray-600 mb-2">
+                      <div className="text-xs sm:text-sm text-gray-600 mb-2">
                         {pkg.duration}
                       </div>
-                      <p className="text-xs text-gray-500 mb-3">
+                      <p className="text-xs text-gray-500 mb-2 sm:mb-3 leading-tight">
                         {pkg.description}
                       </p>
 
@@ -246,9 +246,9 @@ export default function BookingPackagesModal({
               </div>
 
               {selectedPackage && (
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-medium text-gray-900 mb-2">ملخص الحجز:</h4>
-                  <div className="text-sm text-gray-600 space-y-1">
+                <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                  <h4 className="text-sm sm:text-base font-medium text-gray-900 mb-2">ملخص الحجز:</h4>
+                  <div className="text-xs sm:text-sm text-gray-600 space-y-1">
                     <p>المكتب: <span className="font-medium">{office.name}</span></p>
                     <p>الباقة: <span className="font-medium">{selectedPackage.name}</span></p>
                     <p>المدة: <span className="font-medium">{selectedPackage.duration}</span></p>
@@ -287,18 +287,18 @@ export default function BookingPackagesModal({
             </div>
 
             {/* Footer - Fixed */}
-            <div className="p-6 border-t border-gray-200 flex-shrink-0">
-              <div className="flex justify-end space-x-3 space-x-reverse">
+            <div className="p-4 sm:p-6 border-t border-gray-200 flex-shrink-0">
+              <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 sm:space-x-reverse">
                 <button
                   onClick={onClose}
-                  className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                  className="w-full sm:w-auto px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 order-2 sm:order-1"
                 >
                   إلغاء
                 </button>
                 <button
                   onClick={handleConfirmBooking}
                   disabled={!selectedPackage || loading}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full sm:w-auto px-6 py-3 sm:py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium order-1 sm:order-2"
                 >
                   {loading ? 'جاري المعالجة...' : 'اختر هذا المكتب'}
                 </button>
