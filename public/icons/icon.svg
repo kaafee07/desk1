@@ -1,0 +1,37 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" rx="128" fill="url(#gradient)"/>
+  
+  <!-- Office Building Icon -->
+  <rect x="128" y="128" width="256" height="256" rx="24" fill="white" opacity="0.9"/>
+  
+  <!-- Windows -->
+  <rect x="160" y="160" width="32" height="32" rx="4" fill="#6366f1"/>
+  <rect x="208" y="160" width="32" height="32" rx="4" fill="#6366f1"/>
+  <rect x="256" y="160" width="32" height="32" rx="4" fill="#6366f1"/>
+  <rect x="304" y="160" width="32" height="32" rx="4" fill="#6366f1"/>
+  
+  <rect x="160" y="208" width="32" height="32" rx="4" fill="#6366f1"/>
+  <rect x="208" y="208" width="32" height="32" rx="4" fill="#6366f1"/>
+  <rect x="256" y="208" width="32" height="32" rx="4" fill="#6366f1"/>
+  <rect x="304" y="208" width="32" height="32" rx="4" fill="#6366f1"/>
+  
+  <rect x="160" y="256" width="32" height="32" rx="4" fill="#6366f1"/>
+  <rect x="208" y="256" width="32" height="32" rx="4" fill="#6366f1"/>
+  <rect x="256" y="256" width="32" height="32" rx="4" fill="#6366f1"/>
+  <rect x="304" y="256" width="32" height="32" rx="4" fill="#6366f1"/>
+  
+  <!-- Door -->
+  <rect x="224" y="304" width="64" height="80" rx="8" fill="#4f46e5"/>
+  
+  <!-- Door Handle -->
+  <circle cx="272" cy="344" r="4" fill="white"/>
+  
+  <!-- Gradient Definition -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

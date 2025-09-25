@@ -7,6 +7,7 @@ import NameRegistrationModal from '@/components/NameRegistrationModal'
 import BookingPackagesModal from '@/components/BookingPackagesModal'
 import RenewalModal from '@/components/RenewalModal'
 import RewardQRModal from '@/components/RewardQRModal'
+import InstallAppButton from '@/components/InstallAppButton'
 
 interface User {
   id: string
@@ -377,6 +378,11 @@ export default function ClientDashboard() {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Install App Button */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 relative z-10">
+        <InstallAppButton />
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 relative z-10">
