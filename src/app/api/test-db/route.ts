@@ -16,7 +16,43 @@ export async function GET() {
     
     const officeCount = await prisma.office.count()
     console.log('🏢 Office count:', officeCount)
-    
+
+    const subscriptionCount = await prisma.subscription.count()
+    console.log('📋 Subscription count:', subscriptionCount)
+
+    const activeSubscriptions = await prisma.subscription.count({
+      where: {
+        status: 'ACTIVE',
+        endDate: {
+          gte: new Date()
+        }
+      }
+    })
+    console.log('✅ Active subscription count:', activeSubscriptions)
+
+    // Get sample subscriptions
+    const sampleSubscriptions = await prisma.subscription.findMany({
+      take: 3,
+      include: {
+        user: {
+          select: {
+            phone: true,
+            username: true
+          }
+        },
+        office: {
+          select: {
+            name: true,
+            officeNumber: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+    console.log('📊 Sample subscriptions:', sampleSubscriptions)
+
     await prisma.$disconnect()
     
     return NextResponse.json({
@@ -25,6 +61,9 @@ export async function GET() {
       data: {
         userCount,
         officeCount,
+        subscriptionCount,
+        activeSubscriptions,
+        sampleSubscriptions,
         databaseUrl: process.env.DATABASE_URL ? 'Set' : 'Not set',
         environment: process.env.NODE_ENV
       }
