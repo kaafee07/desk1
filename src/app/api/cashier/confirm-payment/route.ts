@@ -157,6 +157,15 @@ export async function POST(request: NextRequest) {
       }
 
       // Create new subscription
+      console.log('📝 Creating new subscription for booking:', {
+        userId: booking.userId,
+        officeId: booking.officeId,
+        duration: booking.duration,
+        startDate: booking.startTime,
+        endDate: booking.endTime,
+        totalPrice: booking.totalPrice
+      })
+
       const [updatedBooking, updatedUser, newSubscription] = await prisma.$transaction([
         prisma.booking.update({
           where: { id: bookingId },
@@ -183,7 +192,14 @@ export async function POST(request: NextRequest) {
         })
       ])
 
-      console.log('✅ New subscription payment confirmed successfully')
+      console.log('✅ New subscription created successfully:', {
+        subscriptionId: newSubscription.id,
+        userId: newSubscription.userId,
+        officeId: newSubscription.officeId,
+        status: newSubscription.status,
+        startDate: newSubscription.startDate,
+        endDate: newSubscription.endDate
+      })
 
       return NextResponse.json({
         success: true,

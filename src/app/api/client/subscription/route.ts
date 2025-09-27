@@ -17,6 +17,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    console.log('🔍 Fetching subscriptions for user:', payload.userId)
+
     // Get all current active subscriptions
     const subscriptions = await prisma.subscription.findMany({
       where: {
@@ -33,6 +35,17 @@ export async function GET(request: NextRequest) {
         createdAt: 'desc',
       },
     })
+
+    console.log('📋 Found subscriptions:', subscriptions.length)
+    console.log('📋 Subscription details:', subscriptions.map(sub => ({
+      id: sub.id,
+      officeId: sub.officeId,
+      officeName: sub.office.name,
+      status: sub.status,
+      startDate: sub.startDate,
+      endDate: sub.endDate,
+      isExpired: new Date() > new Date(sub.endDate)
+    })))
 
     return NextResponse.json({ subscriptions })
   } catch (error) {
