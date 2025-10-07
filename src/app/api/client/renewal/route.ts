@@ -4,23 +4,37 @@ import { verifyTokenEdge, generateBookingCode } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('🔄 Renewal API called')
+
     // Get token from cookies
     const token = request.cookies.get('auth-token')?.value
 
     if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      console.error('❌ No auth token found')
+      return NextResponse.json({ error: 'غير مصرح. يرجى تسجيل الدخول مرة أخرى.' }, { status: 401 })
     }
 
     // Verify token
     const payload = await verifyTokenEdge(token)
     if (!payload) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      console.error('❌ Invalid token')
+      return NextResponse.json({ error: 'جلسة غير صالحة. يرجى تسجيل الدخول مرة أخرى.' }, { status: 401 })
     }
 
     const body = await request.json()
     const { packageType, officeId } = body
 
     console.log('🔄 Renewal request:', { userId: payload.userId, packageType, officeId })
+
+    if (!packageType) {
+      console.error('❌ No package type provided')
+      return NextResponse.json({ error: 'يرجى اختيار نوع الباقة' }, { status: 400 })
+    }
+
+    if (!officeId) {
+      console.error('❌ No office ID provided')
+      return NextResponse.json({ error: 'معرف المكتب مفقود' }, { status: 400 })
+    }
 
     // Check if user has an active subscription for the specified office
     const activeSubscription = await prisma.subscription.findFirst({
@@ -56,23 +70,25 @@ export async function POST(request: NextRequest) {
         duration = 'HOURLY'
         durationHours = 1
         // استخدم سعر التجديد إذا كان متوفراً، وإلا استخدم السعر العادي
-        price = parseInt(activeSubscription.office.renewalPricePerHour) || parseInt(activeSubscription.office.pricePerHour) || 25
+        price = Number(activeSubscription.office.renewalPricePerHour) || Number(activeSubscription.office.pricePerHour) || 25
         break
       case 'daily':
         duration = 'DAILY'
         durationHours = 24
         // استخدم سعر التجديد إذا كان متوفراً، وإلا استخدم السعر العادي
-        price = parseInt(activeSubscription.office.renewalPricePerDay) || parseInt(activeSubscription.office.pricePerDay) || 100
+        price = Number(activeSubscription.office.renewalPricePerDay) || Number(activeSubscription.office.pricePerDay) || 100
         break
       case 'monthly':
         duration = 'MONTHLY'
         durationHours = 24 * 30
         // استخدم سعر التجديد إذا كان متوفراً، وإلا استخدم السعر العادي
-        price = parseInt(activeSubscription.office.renewalPricePerMonth) || parseInt(activeSubscription.office.pricePerMonth) || 3000
+        price = Number(activeSubscription.office.renewalPricePerMonth) || Number(activeSubscription.office.pricePerMonth) || 3000
         break
       default:
         return NextResponse.json({ error: 'نوع الباقة غير صحيح' }, { status: 400 })
     }
+
+    console.log('💰 Calculated price:', price, 'for package:', packageType)
 
     // Calculate new end time (add to existing subscription end time)
     const currentEndTime = new Date(activeSubscription.endDate)

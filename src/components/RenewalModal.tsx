@@ -111,30 +111,39 @@ export default function RenewalModal({ isOpen, subscription, onClose, onRenewalC
 
   const handleRenewal = async () => {
     if (!selectedPackage) return
-    
+
     setLoading(true)
     try {
+      console.log('🔄 Sending renewal request:', {
+        packageType: selectedPackage,
+        officeId: office.id,
+        subscriptionId: subscription.id
+      })
+
       const response = await fetch('/api/client/renewal', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          packageType: selectedPackage
+          packageType: selectedPackage,
+          officeId: office.id
         }),
       })
 
       if (response.ok) {
         const data = await response.json()
+        console.log('✅ Renewal response:', data)
         setPaymentCode(data.paymentCode)
         setShowPaymentCode(true)
       } else {
         const errorData = await response.json()
-        alert(errorData.error)
+        console.error('❌ Renewal error:', errorData)
+        alert(errorData.error || 'حدث خطأ أثناء إنشاء طلب التجديد')
       }
     } catch (error) {
       console.error('❌ Error creating renewal:', error)
-      alert('حدث خطأ أثناء إنشاء طلب التجديد')
+      alert('حدث خطأ أثناء إنشاء طلب التجديد. يرجى المحاولة مرة أخرى.')
     } finally {
       setLoading(false)
     }
@@ -348,20 +357,42 @@ export default function RenewalModal({ isOpen, subscription, onClose, onRenewalC
                   اذهب إلى الكاشير وأظهر هذا الكود أو امسح QR Code
                 </p>
                 
-                <div className="bg-white p-4 rounded-lg border-2 border-dashed border-gray-300 mb-4">
-                  <p className="text-3xl font-bold text-gray-900 mb-2">{paymentCode}</p>
-                  <p className="text-sm text-gray-600">كود الدفع</p>
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border-2 border-blue-200 mb-6">
+                  <p className="text-sm text-gray-600 mb-2">كود الدفع</p>
+                  <p className="text-4xl sm:text-5xl font-bold text-blue-600 mb-2 tracking-wider">{paymentCode}</p>
+                  <p className="text-xs text-gray-500">أظهر هذا الكود للكاشير</p>
                 </div>
 
-                <div className="bg-white p-4 rounded-lg border mb-4">
+                {/* QR Code - Temporarily disabled */}
+                {/* <div className="bg-white p-4 rounded-lg border mb-4">
                   <QRCode value={paymentCode} size={200} className="mx-auto" />
+                </div> */}
+
+                <div className="bg-white p-4 rounded-lg border border-gray-200 mb-4">
+                  <div className="text-sm text-gray-700 space-y-2">
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                      <span className="text-gray-600">📦 الباقة:</span>
+                      <span className="font-semibold">{getPackageName(selectedPackage)}</span>
+                    </div>
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                      <span className="text-gray-600">💰 المبلغ:</span>
+                      <span className="font-semibold text-green-600">{getPackagePrice(selectedPackage).toFixed(0)} ريال</span>
+                    </div>
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                      <span className="text-gray-600">🏢 المكتب:</span>
+                      <span className="font-semibold">{office.name}</span>
+                    </div>
+                    <div className="flex items-center justify-between py-2">
+                      <span className="text-gray-600">⏰ صالح لمدة:</span>
+                      <span className="font-semibold text-orange-600">10 دقائق</span>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="text-sm text-gray-600 space-y-1">
-                  <p>📦 الباقة: {getPackageName(selectedPackage)}</p>
-                  <p>💰 المبلغ: {getPackagePrice(selectedPackage).toFixed(0)} ريال</p>
-                  <p>🏢 المكتب: {office.name}</p>
-                  <p>⏰ صالح لمدة 10 دقائق</p>
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                  <p className="text-xs text-yellow-800 text-center">
+                    ⚠️ يرجى الذهاب إلى الكاشير خلال 10 دقائق لإتمام عملية الدفع
+                  </p>
                 </div>
               </div>
 
