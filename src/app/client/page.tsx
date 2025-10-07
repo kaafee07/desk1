@@ -25,6 +25,8 @@ interface Office {
   pricePerHour: number
   pricePerDay: number
   pricePerMonth: number
+  officeNumber?: string
+  isAvailable?: boolean
   discountPercentage: number // خصم عام (للتوافق مع الكود القديم)
   // خصومات منفصلة لكل نوع باقة
   hourlyDiscount?: number
@@ -43,6 +45,7 @@ interface Subscription {
   startDate: string
   endDate: string
   status: string
+  totalPrice?: number
 }
 
 interface LoyaltyReward {
@@ -82,12 +85,21 @@ export default function ClientDashboard() {
     fetchUserData()
 
     // Set up periodic refresh every 30 seconds to catch new subscriptions
-    const interval = setInterval(() => {
+    const dataRefreshInterval = setInterval(() => {
       console.log('🔄 Refreshing user data...')
       fetchUserData()
     }, 30000) // 30 seconds
 
-    return () => clearInterval(interval)
+    // Set up timer refresh every minute to update remaining time display
+    const timerRefreshInterval = setInterval(() => {
+      // Force re-render to update remaining time
+      setSubscriptions(prev => [...prev])
+    }, 60000) // 1 minute
+
+    return () => {
+      clearInterval(dataRefreshInterval)
+      clearInterval(timerRefreshInterval)
+    }
   }, [])
 
   const fetchUserData = async () => {
@@ -348,13 +360,102 @@ export default function ClientDashboard() {
     const end = new Date(subscription.endDate)
     const diff = end.getTime() - now.getTime()
 
-    if (diff <= 0) return 'Expired'
+    if (diff <= 0) return 'منتهي'
 
     const days = Math.floor(diff / (1000 * 60 * 60 * 24))
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
 
-    if (days > 0) return `${days} days, ${hours} hours`
-    return `${hours} hours`
+    if (days > 30) {
+      const months = Math.floor(days / 30)
+      const remainingDays = days % 30
+      if (remainingDays > 0) {
+        return `${months} شهر و ${remainingDays} يوم`
+      }
+      return `${months} شهر`
+    }
+
+    if (days > 0) {
+      if (hours > 0) {
+        return `${days} يوم و ${hours} ساعة`
+      }
+      return `${days} يوم`
+    }
+
+    if (hours > 0) {
+      if (minutes > 0) {
+        return `${hours} ساعة و ${minutes} دقيقة`
+      }
+      return `${hours} ساعة`
+    }
+
+    return `${minutes} دقيقة`
+  }
+
+  const getRemainingTimeDetailed = (subscription: Subscription) => {
+    const now = new Date()
+    const end = new Date(subscription.endDate)
+    const diff = end.getTime() - now.getTime()
+
+    if (diff <= 0) {
+      return {
+        text: 'منتهي',
+        color: 'text-red-600',
+        bgColor: 'bg-red-50',
+        borderColor: 'border-red-200',
+        icon: '⚠️'
+      }
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+
+    let text = ''
+    let color = 'text-emerald-600'
+    let bgColor = 'bg-emerald-50'
+    let borderColor = 'border-emerald-200'
+    let icon = '✅'
+
+    if (days > 30) {
+      const months = Math.floor(days / 30)
+      const remainingDays = days % 30
+      if (remainingDays > 0) {
+        text = `${months} شهر و ${remainingDays} يوم`
+      } else {
+        text = `${months} شهر`
+      }
+      icon = '🎉'
+    } else if (days > 7) {
+      text = days > 0 && hours > 0 ? `${days} يوم و ${hours} ساعة` : `${days} يوم`
+      icon = '✅'
+    } else if (days > 2) {
+      text = days > 0 && hours > 0 ? `${days} يوم و ${hours} ساعة` : `${days} يوم`
+      color = 'text-blue-600'
+      bgColor = 'bg-blue-50'
+      borderColor = 'border-blue-200'
+      icon = '⏰'
+    } else if (days > 0) {
+      text = days > 0 && hours > 0 ? `${days} يوم و ${hours} ساعة` : `${days} يوم`
+      color = 'text-amber-600'
+      bgColor = 'bg-amber-50'
+      borderColor = 'border-amber-200'
+      icon = '⚠️'
+    } else if (hours > 0) {
+      text = hours > 0 && minutes > 0 ? `${hours} ساعة و ${minutes} دقيقة` : `${hours} ساعة`
+      color = 'text-orange-600'
+      bgColor = 'bg-orange-50'
+      borderColor = 'border-orange-200'
+      icon = '🔔'
+    } else {
+      text = `${minutes} دقيقة`
+      color = 'text-red-600'
+      bgColor = 'bg-red-50'
+      borderColor = 'border-red-200'
+      icon = '⚠️'
+    }
+
+    return { text, color, bgColor, borderColor, icon }
   }
 
   return (
@@ -429,40 +530,78 @@ export default function ClientDashboard() {
             </div>
             {subscriptions.length > 0 ? (
               <div className="space-y-4">
-                {subscriptions.map((subscription) => (
-                  <div key={subscription.id} className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/50 rounded-xl p-4 sm:p-6 hover:shadow-md transition-all duration-200">
-                    <div className="space-y-3 sm:space-y-4">
-                      <div>
-                        <h4 className="text-base sm:text-lg font-bold text-gray-900 mb-1 sm:mb-2">
-                          {subscription.office.name}
-                        </h4>
-                        <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2">{subscription.office.description}</p>
-                        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                          <span className="bg-white/80 text-emerald-700 px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold border border-emerald-200">
-                            📅 {subscription.duration.toLowerCase()}
-                          </span>
-                          <span className="bg-white/80 text-amber-700 px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold border border-amber-200">
-                            ⏰ {getRemainingTime(subscription)}
-                          </span>
+                {subscriptions.map((subscription) => {
+                  const remainingTime = getRemainingTimeDetailed(subscription)
+                  return (
+                    <div key={subscription.id} className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/50 rounded-xl p-4 sm:p-6 hover:shadow-md transition-all duration-200">
+                      <div className="space-y-3 sm:space-y-4">
+                        <div>
+                          <div className="flex items-start justify-between mb-2">
+                            <h4 className="text-base sm:text-lg font-bold text-gray-900">
+                              {subscription.office.name}
+                            </h4>
+                            <span className="text-xs text-gray-500 bg-white/60 px-2 py-1 rounded-lg">
+                              #{subscription.office.officeNumber}
+                            </span>
+                          </div>
+                          <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2">{subscription.office.description}</p>
+
+                          {/* Duration Type Badge */}
+                          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3">
+                            <span className="bg-white/80 text-emerald-700 px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold border border-emerald-200">
+                              📅 {subscription.duration === 'HOURLY' ? 'ساعي' : subscription.duration === 'DAILY' ? 'يومي' : 'شهري'}
+                            </span>
+                            <span className="bg-white/80 text-gray-600 px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold border border-gray-200">
+                              💰 {subscription.totalPrice} ريال
+                            </span>
+                          </div>
+
+                          {/* Remaining Time - Prominent Display */}
+                          <div className={`${remainingTime.bgColor} ${remainingTime.borderColor} border-2 rounded-xl p-3 sm:p-4`}>
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-2 space-x-reverse">
+                                <span className="text-2xl">{remainingTime.icon}</span>
+                                <div>
+                                  <p className="text-xs text-gray-600 mb-0.5">المدة المتبقية</p>
+                                  <p className={`text-sm sm:text-base font-bold ${remainingTime.color}`}>
+                                    {remainingTime.text}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="text-left">
+                                <p className="text-xs text-gray-500">ينتهي في</p>
+                                <p className="text-xs font-semibold text-gray-700">
+                                  {new Date(subscription.endDate).toLocaleDateString('ar-SA', {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="pt-3 border-t border-emerald-200/50 flex justify-end">
+                          <button
+                            onClick={() => {
+                              setSelectedOffice(subscription.office)
+                              setShowRenewalModal(true)
+                            }}
+                            className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-3 py-2 sm:px-5 sm:py-2.5 rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-all duration-200 text-xs sm:text-sm font-semibold shadow-lg shadow-emerald-500/25 flex items-center space-x-1 space-x-reverse sm:space-x-2"
+                          >
+                            <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            <span>تجديد الاشتراك</span>
+                          </button>
                         </div>
                       </div>
-                      <div className="pt-3 border-t border-emerald-200/50 flex justify-end">
-                        <button
-                          onClick={() => {
-                            setSelectedOffice(subscription.office)
-                            setShowRenewalModal(true)
-                          }}
-                          className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-3 py-2 sm:px-5 sm:py-2.5 rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-all duration-200 text-xs sm:text-sm font-semibold shadow-lg shadow-emerald-500/25 flex items-center space-x-1 space-x-reverse sm:space-x-2"
-                        >
-                          <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                          </svg>
-                          <span>تجديد</span>
-                        </button>
-                      </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             ) : (
               <div className="text-center py-8 sm:py-12">
