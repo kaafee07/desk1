@@ -9,15 +9,24 @@ export default function PWAPrompt() {
   const [dismissed, setDismissed] = useState(false)
 
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+      return
+    }
+
     // Show prompt after 30 seconds if installable and not dismissed
     const timer = setTimeout(() => {
       if (isInstallable && !isInstalled && !dismissed) {
-        const lastDismissed = localStorage.getItem('pwa-prompt-dismissed')
-        const now = Date.now()
-        const oneDayAgo = now - (24 * 60 * 60 * 1000) // 24 hours
+        try {
+          const lastDismissed = localStorage.getItem('pwa-prompt-dismissed')
+          const now = Date.now()
+          const oneDayAgo = now - (24 * 60 * 60 * 1000) // 24 hours
 
-        if (!lastDismissed || parseInt(lastDismissed) < oneDayAgo) {
-          setShowPrompt(true)
+          if (!lastDismissed || parseInt(lastDismissed) < oneDayAgo) {
+            setShowPrompt(true)
+          }
+        } catch (error) {
+          console.error('Error accessing localStorage:', error)
         }
       }
     }, 30000) // 30 seconds
@@ -35,7 +44,15 @@ export default function PWAPrompt() {
   const handleDismiss = () => {
     setShowPrompt(false)
     setDismissed(true)
-    localStorage.setItem('pwa-prompt-dismissed', Date.now().toString())
+
+    // Safely store dismissal time
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem('pwa-prompt-dismissed', Date.now().toString())
+      } catch (error) {
+        console.error('Error saving to localStorage:', error)
+      }
+    }
   }
 
   if (!showPrompt || isInstalled) {
