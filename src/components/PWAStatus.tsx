@@ -7,16 +7,26 @@ export default function PWAStatus() {
   const [isStandalone, setIsStandalone] = useState(false)
 
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+      return
+    }
+
     // Check online status
     setIsOnline(navigator.onLine)
-    
+
     // Check if running as PWA
     const checkStandalone = () => {
-      const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches
-      const isInWebAppiOS = (window.navigator as any).standalone === true
-      setIsStandalone(isStandaloneMode || isInWebAppiOS)
+      try {
+        const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches
+        const isInWebAppiOS = (window.navigator as any).standalone === true
+        setIsStandalone(isStandaloneMode || isInWebAppiOS)
+      } catch (error) {
+        console.error('Error checking standalone mode:', error)
+        setIsStandalone(false)
+      }
     }
-    
+
     checkStandalone()
 
     // Listen for online/offline events

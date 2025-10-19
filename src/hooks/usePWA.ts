@@ -92,8 +92,15 @@ export function usePWA() {
   }
 
   const getInstallInstructions = () => {
-    const userAgent = typeof window !== 'undefined' ? window.navigator.userAgent : ''
-    
+    if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+      return {
+        platform: 'Unknown',
+        instructions: ['يرجى فتح التطبيق في المتصفح']
+      }
+    }
+
+    const userAgent = window.navigator.userAgent
+
     if (/iPhone|iPad|iPod/.test(userAgent)) {
       return {
         platform: 'iOS',
